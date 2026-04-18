@@ -5,9 +5,93 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>golab — Lorenzo Minon</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />  <link rel="stylesheet" href="/static/css/style.css" />
 </head>
 <body>
-  <h1>golab</h1>
+
+  <div class="noise"></div>
+
+  <nav class="nav">
+    <span class="nav-logo">go<span class="accent">lab</span></span>
+    <div class="nav-links">
+      <a href="https://github.com/LorenzoMinon/golab" target="_blank" class="nav-link">GitHub ↗</a>
+    </div>
+  </nav>
+
+  <section class="hero">
+    <div class="hero-label">
+      <span class="dot dot--pulse"></span>
+      <span class="mono">learning go — in public</span>
+    </div>
+    <h1 class="hero-title">
+      My Go<br/>
+      <span class="accent">roadmap</span>
+    </h1>
+    <p class="hero-sub">
+      Real projects built while learning Go from scratch.
+      Each one solves a concrete problem and documents the language concepts along the way.
+    </p>
+    <div class="hero-meta">
+      <div class="meta-item">
+        <span class="mono meta-label">stack</span>
+        <span class="meta-value">Go · PostgreSQL · Fly.io</span>
+      </div>
+      <div class="meta-item">
+        <span class="mono meta-label">background</span>
+        <span class="meta-value">Data Analyst · Python · SQL</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="projects">
+    <div class="section-header">
+      <span class="mono section-label">// projects</span>
+      <div class="section-line"></div>
+    </div>
+
+    <div class="project-list">
+      {{range $i, $p := .Projects}}
+      <div class="project-card {{$p.Status}}">
+        <div class="project-index">
+          <span class="mono">{{printf "%02d" (add $i 1)}}</span>
+        </div>
+        <div class="project-content">
+          <div class="project-header">
+            <h2 class="project-name">{{$p.Name}}</h2>
+            <span class="status-badge status--{{$p.Status}}">
+              {{if eq $p.Status "live"}}● live
+              {{else if eq $p.Status "building"}}◐ building
+              {{else}}○ planned{{end}}
+            </span>
+          </div>
+          <p class="project-desc">{{$p.Description}}</p>
+          <div class="project-footer">
+            <div class="tags">
+              {{range $p.Tags}}
+              <span class="tag mono">{{.}}</span>
+              {{end}}
+            </div>
+            {{if eq $p.Status "live"}}
+            <a href="{{$p.URL}}" class="project-link">view project →</a>
+            {{end}}
+          </div>
+        </div>
+      </div>
+      {{end}}
+    </div>
+  </section>
+
+  <footer class="footer">
+    <span class="mono">Lorenzo Minon — Rosario, Argentina</span>
+    <div class="footer-right">
+      <a href="https://github.com/LorenzoMinon" target="_blank" class="mono footer-link">github ↗</a>
+      <a href="https://linkedin.com/in/lorenzominon" target="_blank" class="mono footer-link">linkedin ↗</a>
+    </div>
+  </footer>
+
+  <script src="/static/js/main.js"></script>
 </body>
 </html>
 {{end}}

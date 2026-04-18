@@ -77,7 +77,7 @@ func main() {
 	}).ParseGlob("web/templates/*.html"))
 
 	fs := http.FileServer(http.Dir("web/static"))
-	http.Handle("/static", http.StripPrefix("/static/", fs))
+	http.Handle("/static/", http.StripPrefix("/static/", fs))
 
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		data := PageData{Projects: projects}
