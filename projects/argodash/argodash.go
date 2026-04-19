@@ -232,14 +232,14 @@ func fetchInflation(wg *sync.WaitGroup, result *InflationData) {
 	defer wg.Done()
 
 	client := &http.Client{Timeout: 5 * time.Second}
-	resp, err := client.Get("https://api.argentinadatos.com/v1/finanzas/indices/inflacion/ultimo")
+	resp, err := client.Get("https://api.argentinadatos.com/v1/finanzas/indices/inflacion")
 	if err != nil {
 		result.Error = "could not reach argentinadatos.com"
 		return
 	}
 	defer resp.Body.Close()
 
-	var raw struct {
+	var raw []struct {
 		Valor float64 `json:"valor"`
 		Fecha string  `json:"fecha"`
 	}
@@ -249,8 +249,14 @@ func fetchInflation(wg *sync.WaitGroup, result *InflationData) {
 		return
 	}
 
-	result.Value = raw.Valor
-	result.Month = raw.Fecha
+	if len(raw) == 0 {
+		result.Error = "no data available"
+		return
+	}
+
+	last := raw[len(raw)-1]
+	result.Value = last.Valor
+	result.Month = last.Fecha
 }
 
 func fetchNews(wg *sync.WaitGroup, result *NewsData) {

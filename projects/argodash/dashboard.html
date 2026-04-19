@@ -1,311 +1,379 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>ArgoDash</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
-  <style>
-    :root {
-      --bg:       #0a0a0f;
-      --card:     #111118;
-      --border:   rgba(255,255,255,0.06);
-      --text:     #f0f2f7;
-      --muted:    #8a8fa8;
-      --dim:      #3d4260;
-      --cyan:     #00acd7;
-      --cyan-dim: rgba(0,172,215,0.1);
-      --green:    #34d399;
-      --yellow:   #fbbf24;
-      --red:      #f87171;
-      --radius:   12px;
-      --font:     'Plus Jakarta Sans', sans-serif;
-      --mono:     'JetBrains Mono', monospace;
-    }
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ArgoDash</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;700;800&family=JetBrains+Mono:wght@400;500&display=swap"
+        rel="stylesheet" />
+    <style>
+        :root {
+            --bg: #0a0a0f;
+            --card: #111118;
+            --border: rgba(255, 255, 255, 0.06);
+            --text: #f0f2f7;
+            --muted: #8a8fa8;
+            --dim: #3d4260;
+            --cyan: #00acd7;
+            --cyan-dim: rgba(0, 172, 215, 0.1);
+            --green: #34d399;
+            --yellow: #fbbf24;
+            --red: #f87171;
+            --radius: 12px;
+            --font: 'Plus Jakarta Sans', sans-serif;
+            --mono: 'JetBrains Mono', monospace;
+        }
 
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
 
-    body {
-      background: var(--bg);
-      color: var(--text);
-      font-family: var(--font);
-      min-height: 100vh;
-      padding: 2rem;
-      -webkit-font-smoothing: antialiased;
-    }
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: var(--font);
+            min-height: 100vh;
+            padding: 2rem;
+            -webkit-font-smoothing: antialiased;
+        }
 
-    body::before {
-      content: '';
-      position: fixed;
-      inset: 0;
-      background-image:
-        linear-gradient(rgba(255,255,255,0.015) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(255,255,255,0.015) 1px, transparent 1px);
-      background-size: 48px 48px;
-      pointer-events: none;
-    }
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background-image:
+                linear-gradient(rgba(255, 255, 255, 0.015) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 255, 255, 0.015) 1px, transparent 1px);
+            background-size: 48px 48px;
+            pointer-events: none;
+        }
 
-    header {
-      max-width: 1100px;
-      margin: 0 auto 2rem;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
+        header {
+            max-width: 1100px;
+            margin: 0 auto 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
 
-    .logo {
-      font-weight: 800;
-      font-size: 1.1rem;
-      letter-spacing: -0.03em;
-    }
+        .logo {
+            font-weight: 800;
+            font-size: 1.1rem;
+            letter-spacing: -0.03em;
+        }
 
-    .logo span { color: var(--cyan); }
+        .logo span {
+            color: var(--cyan);
+        }
 
-    .fetched {
-      font-family: var(--mono);
-      font-size: 0.68rem;
-      color: var(--dim);
-    }
+        .fetched {
+            font-family: var(--mono);
+            font-size: 0.68rem;
+            color: var(--dim);
+        }
 
-    .fetched em {
-      color: var(--cyan);
-      font-style: normal;
-    }
+        .fetched em {
+            color: var(--cyan);
+            font-style: normal;
+        }
 
-    .grid {
-      max-width: 1100px;
-      margin: 0 auto;
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-      gap: 1rem;
-    }
+        .grid {
+            max-width: 1100px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1rem;
+        }
 
-    .card {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 1.5rem;
-      display: flex;
-      flex-direction: column;
-      gap: 0.75rem;
-      animation: fadeUp 0.4s ease forwards;
-      opacity: 0;
-    }
+        .card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            animation: fadeUp 0.4s ease forwards;
+            opacity: 0;
+        }
 
-    .card-label {
-      font-family: var(--mono);
-      font-size: 0.62rem;
-      color: var(--dim);
-      text-transform: uppercase;
-      letter-spacing: 0.1em;
-    }
+        .card-label {
+            font-family: var(--mono);
+            font-size: 0.62rem;
+            color: var(--dim);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
 
-    .card-value {
-      font-size: 2rem;
-      font-weight: 800;
-      letter-spacing: -0.03em;
-      color: var(--text);
-      line-height: 1;
-    }
+        .card-value {
+            font-size: 2rem;
+            font-weight: 800;
+            letter-spacing: -0.03em;
+            color: var(--text);
+            line-height: 1;
+        }
 
-    .card-value.cyan   { color: var(--cyan); }
-    .card-value.green  { color: var(--green); }
-    .card-value.yellow { color: var(--yellow); }
+        .card-value.cyan {
+            color: var(--cyan);
+        }
 
-    .card-sub {
-      font-size: 0.8rem;
-      color: var(--muted);
-    }
+        .card-value.green {
+            color: var(--green);
+        }
 
-    .error {
-      font-family: var(--mono);
-      font-size: 0.72rem;
-      color: var(--red);
-    }
+        .card-value.yellow {
+            color: var(--yellow);
+        }
 
-    .news-list {
-      display: flex;
-      flex-direction: column;
-      gap: 0.75rem;
-    }
+        .card-sub {
+            font-size: 0.8rem;
+            color: var(--muted);
+        }
 
-    .news-item a {
-      font-size: 0.82rem;
-      color: var(--text);
-      text-decoration: none;
-      line-height: 1.4;
-      display: block;
-    }
+        .error {
+            font-family: var(--mono);
+            font-size: 0.72rem;
+            color: var(--red);
+        }
 
-    .news-item a:hover { color: var(--cyan); }
+        .news-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
 
-    .news-source {
-      font-family: var(--mono);
-      font-size: 0.6rem;
-      color: var(--dim);
-      margin-top: 0.2rem;
-    }
+        .news-item a {
+            font-size: 0.82rem;
+            color: var(--text);
+            text-decoration: none;
+            line-height: 1.4;
+            display: block;
+        }
 
-    .status-dot {
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      display: inline-block;
-      margin-right: 0.4rem;
-    }
+        .news-item a:hover {
+            color: var(--cyan);
+        }
 
-    .status-none { background: var(--green); }
-    .status-minor { background: var(--yellow); }
-    .status-major, .status-critical { background: var(--red); }
+        .news-source {
+            font-family: var(--mono);
+            font-size: 0.6rem;
+            color: var(--dim);
+            margin-top: 0.2rem;
+        }
 
-    .card:nth-child(1)  { animation-delay: 0.05s; }
-    .card:nth-child(2)  { animation-delay: 0.10s; }
-    .card:nth-child(3)  { animation-delay: 0.15s; }
-    .card:nth-child(4)  { animation-delay: 0.20s; }
-    .card:nth-child(5)  { animation-delay: 0.25s; }
-    .card:nth-child(6)  { animation-delay: 0.30s; }
-    .card:nth-child(7)  { animation-delay: 0.35s; }
-    .card:nth-child(8)  { animation-delay: 0.40s; }
-    .card:nth-child(9)  { animation-delay: 0.45s; }
-    .card:nth-child(10) { animation-delay: 0.50s; }
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 0.4rem;
+        }
 
-    @keyframes fadeUp {
-      from { opacity: 0; transform: translateY(10px); }
-      to   { opacity: 1; transform: translateY(0); }
-    }
-  </style>
+        .status-none {
+            background: var(--green);
+        }
+
+        .status-minor {
+            background: var(--yellow);
+        }
+
+        .status-major,
+        .status-critical {
+            background: var(--red);
+        }
+
+        .card:nth-child(1) {
+            animation-delay: 0.05s;
+        }
+
+        .card:nth-child(2) {
+            animation-delay: 0.10s;
+        }
+
+        .card:nth-child(3) {
+            animation-delay: 0.15s;
+        }
+
+        .card:nth-child(4) {
+            animation-delay: 0.20s;
+        }
+
+        .card:nth-child(5) {
+            animation-delay: 0.25s;
+        }
+
+        .card:nth-child(6) {
+            animation-delay: 0.30s;
+        }
+
+        .card:nth-child(7) {
+            animation-delay: 0.35s;
+        }
+
+        .card:nth-child(8) {
+            animation-delay: 0.40s;
+        }
+
+        .card:nth-child(9) {
+            animation-delay: 0.45s;
+        }
+
+        .card:nth-child(10) {
+            animation-delay: 0.50s;
+        }
+
+        @keyframes fadeUp {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
 </head>
+
 <body>
 
-  <header>
-    <div class="logo">Argo<span>Dash</span></div>
-    <div class="fetched">fetched at <em>{{.FetchedAt}}</em></div>
-  </header>
+    <header>
+        <div class="logo">Argo<span>Dash</span></div>
+        <div class="fetched">fetched at <em>{{.FetchedAt}}</em></div>
+    </header>
 
-  <div class="grid">
+    <div class="grid">
 
-    <!-- Dollar -->
-    <div class="card">
-      <div class="card-label">🇦🇷 Argentine Dollar</div>
-      {{if .Dollar.Error}}
-        <div class="error">{{.Dollar.Error}}</div>
-      {{else}}
-        <div class="card-value cyan">${{printf "%.0f" .Dollar.Blue}}</div>
-        <div class="card-sub">Blue · Official: ${{printf "%.0f" .Dollar.Official}}</div>
-      {{end}}
-    </div>
-
-    <!-- Weather -->
-    <div class="card">
-      <div class="card-label">🌤 Weather · Rosario</div>
-      {{if .Weather.Error}}
-        <div class="error">{{.Weather.Error}}</div>
-      {{else}}
-        <div class="card-value">{{.Weather.Temp}}</div>
-        <div class="card-sub">{{.Weather.Condition}}</div>
-      {{end}}
-    </div>
-
-    <!-- S&P500 -->
-    <div class="card">
-      <div class="card-label">📈 S&P 500 (SPY)</div>
-      {{if .SP500.Error}}
-        <div class="error">{{.SP500.Error}}</div>
-      {{else}}
-        <div class="card-value green">${{.SP500.Price}}</div>
-        <div class="card-sub">Change: {{.SP500.Change}}</div>
-      {{end}}
-    </div>
-
-    <!-- Country Risk -->
-    <div class="card">
-      <div class="card-label">🏦 Country Risk</div>
-      {{if .RiskScore.Error}}
-        <div class="error">{{.RiskScore.Error}}</div>
-      {{else}}
-        <div class="card-value yellow">{{.RiskScore.Value}}</div>
-        <div class="card-sub">basis points</div>
-      {{end}}
-    </div>
-
-    <!-- Bitcoin -->
-    <div class="card">
-      <div class="card-label">₿ Bitcoin</div>
-      {{if .Crypto.Error}}
-        <div class="error">{{.Crypto.Error}}</div>
-      {{else}}
-        <div class="card-value cyan">${{printf "%.0f" .Crypto.Bitcoin}}</div>
-        <div class="card-sub">USD · Coinbase spot</div>
-      {{end}}
-    </div>
-
-    <!-- Inflation -->
-    <div class="card">
-      <div class="card-label">📊 Argentina Inflation</div>
-      {{if .Inflation.Error}}
-        <div class="error">{{.Inflation.Error}}</div>
-      {{else}}
-        <div class="card-value yellow">{{.Inflation.Value}}%</div>
-        <div class="card-sub">{{.Inflation.Month}}</div>
-      {{end}}
-    </div>
-
-    <!-- News -->
-    <div class="card">
-      <div class="card-label">📰 Tech News</div>
-      {{if .News.Error}}
-        <div class="error">{{.News.Error}}</div>
-      {{else}}
-        <div class="news-list">
-          {{range .News.Articles}}
-          <div class="news-item">
-            <a href="{{.URL}}" target="_blank">{{.Title}}</a>
-            <div class="news-source">{{.Source}}</div>
-          </div>
-          {{end}}
+        <!-- Dollar -->
+        <div class="card">
+            <div class="card-label">🇦🇷 Argentine Dollar</div>
+            {{if .Dollar.Error}}
+            <div class="error">{{.Dollar.Error}}</div>
+            {{else}}
+            <div class="card-value cyan">${{printf "%.0f" .Dollar.Blue}}</div>
+            <div class="card-sub">Blue · Official: ${{printf "%.0f" .Dollar.Official}}</div>
+            {{end}}
         </div>
-      {{end}}
-    </div>
 
-    <!-- FX Rate -->
-    <div class="card">
-      <div class="card-label">💱 EUR / USD</div>
-      {{if .FxRate.Error}}
-        <div class="error">{{.FxRate.Error}}</div>
-      {{else}}
-        <div class="card-value green">{{printf "%.4f" .FxRate.EURUSD}}</div>
-        <div class="card-sub">Frankfurter · ECB data</div>
-      {{end}}
-    </div>
-
-    <!-- GitHub Status -->
-    <div class="card">
-      <div class="card-label">🐙 GitHub Status</div>
-      {{if .GitHub.Error}}
-        <div class="error">{{.GitHub.Error}}</div>
-      {{else}}
-        <div class="card-value">
-          <span class="status-dot status-{{.GitHub.Status}}"></span>
-          {{.GitHub.Status}}
+        <!-- Weather -->
+        <div class="card">
+            <div class="card-label">🌤 Weather · Rosario</div>
+            {{if .Weather.Error}}
+            <div class="error">{{.Weather.Error}}</div>
+            {{else}}
+            <div class="card-value">{{.Weather.Temp}}</div>
+            <div class="card-sub">{{.Weather.Condition}}</div>
+            {{end}}
         </div>
-        <div class="card-sub">{{.GitHub.Description}}</div>
-      {{end}}
-    </div>
 
-    <!-- ISS -->
-    <div class="card">
-      <div class="card-label">🛰 ISS Position</div>
-      {{if .ISS.Error}}
-        <div class="error">{{.ISS.Error}}</div>
-      {{else}}
-        <div class="card-value cyan" style="font-size:1.1rem; line-height:1.6">
-          {{.ISS.Latitude}}<br/>{{.ISS.Longitude}}
+        <!-- S&P500 -->
+        <div class="card">
+            <div class="card-label">📈 S&P 500 (SPY)</div>
+            {{if .SP500.Error}}
+            <div class="error">{{.SP500.Error}}</div>
+            {{else}}
+            <div class="card-value green">${{.SP500.Price}}</div>
+            <div class="card-sub">Change: {{.SP500.Change}}</div>
+            {{end}}
         </div>
-        <div class="card-sub">lat / lng · real time</div>
-      {{end}}
-    </div>
 
-  </div>
+        <!-- Country Risk -->
+        <div class="card">
+            <div class="card-label">🏦 Country Risk</div>
+            {{if .RiskScore.Error}}
+            <div class="error">{{.RiskScore.Error}}</div>
+            {{else}}
+            <div class="card-value yellow">{{.RiskScore.Value}}</div>
+            <div class="card-sub">basis points</div>
+            {{end}}
+        </div>
+
+        <!-- Bitcoin -->
+        <div class="card">
+            <div class="card-label">₿ Bitcoin</div>
+            {{if .Crypto.Error}}
+            <div class="error">{{.Crypto.Error}}</div>
+            {{else}}
+            <div class="card-value cyan">${{printf "%.0f" .Crypto.Bitcoin}}</div>
+            <div class="card-sub">USD · Coinbase spot</div>
+            {{end}}
+        </div>
+
+        <!-- Inflation -->
+        <div class="card">
+            <div class="card-label">📊 Argentina Inflation</div>
+            {{if .Inflation.Error}}
+            <div class="error">{{.Inflation.Error}}</div>
+            {{else}}
+            <div class="card-value yellow">{{.Inflation.Value}}%</div>
+            <div class="card-sub">{{.Inflation.Month}}</div>
+            {{end}}
+        </div>
+
+        <!-- News -->
+        <div class="card">
+            <div class="card-label">📰 Tech News</div>
+            {{if .News.Error}}
+            <div class="error">{{.News.Error}}</div>
+            {{else}}
+            <div class="news-list">
+                {{range .News.Articles}}
+                <div class="news-item">
+                    <a href="{{.URL}}" target="_blank">{{.Title}}</a>
+                    <div class="news-source">{{.Source}}</div>
+                </div>
+                {{end}}
+            </div>
+            {{end}}
+        </div>
+
+        <!-- FX Rate -->
+        <div class="card">
+            <div class="card-label">💱 EUR / USD</div>
+            {{if .FxRate.Error}}
+            <div class="error">{{.FxRate.Error}}</div>
+            {{else}}
+            <div class="card-value green">{{printf "%.4f" .FxRate.EURUSD}}</div>
+            <div class="card-sub">Frankfurter · ECB data</div>
+            {{end}}
+        </div>
+
+        <!-- GitHub Status -->
+        <div class="card">
+            <div class="card-label">🐙 GitHub Status</div>
+            {{if .GitHub.Error}}
+            <div class="error">{{.GitHub.Error}}</div>
+            {{else}}
+            <div class="card-value" style="font-size: 1rem; font-weight: 600;">
+                <span class="status-dot status-{{.GitHub.Status}}"></span>
+                {{.GitHub.Description}}
+            </div>
+            <div class="card-sub">indicator: {{.GitHub.Status}}</div>
+            {{end}}
+        </div>
+
+        <!-- ISS -->
+        <div class="card">
+            <div class="card-label">🛰 ISS Position</div>
+            {{if .ISS.Error}}
+            <div class="error">{{.ISS.Error}}</div>
+            {{else}}
+            <div class="card-value cyan" style="font-size:1.1rem; line-height:1.6">
+                {{.ISS.Latitude}}<br />{{.ISS.Longitude}}
+            </div>
+            <div class="card-sub">lat / lng · real time</div>
+            {{end}}
+        </div>
+
+    </div>
 </body>
+
 </html>
