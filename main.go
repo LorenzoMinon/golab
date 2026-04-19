@@ -7,6 +7,7 @@ import (
 	"os"
 
 	"github.com/LorenzoMinon/golab/projects/argodash"
+	"github.com/LorenzoMinon/golab/projects/linkchecker"
 )
 
 type Project struct {
@@ -82,6 +83,7 @@ func main() {
 	http.Handle("/static/", http.StripPrefix("/static/", fs))
 
 	http.Handle("/projects/argodash", argodash.Handler())
+	http.Handle("/projects/linkchecker", linkchecker.Handler())
 
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		data := PageData{Projects: projects}

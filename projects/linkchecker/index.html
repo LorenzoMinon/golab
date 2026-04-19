@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>LinkChecker — golab</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg:     #0a0a0f;
+      --card:   #111118;
+      --border: rgba(255,255,255,0.06);
+      --text:   #f0f2f7;
+      --muted:  #8a8fa8;
+      --dim:    #3d4260;
+      --cyan:   #00acd7;
+      --green:  #34d399;
+      --red:    #f87171;
+      --radius: 12px;
+      --font:   'Plus Jakarta Sans', sans-serif;
+      --mono:   'JetBrains Mono', monospace;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font);
+      min-height: 100vh;
+      padding: 2rem;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(255,255,255,0.015) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.015) 1px, transparent 1px);
+      background-size: 48px 48px;
+      pointer-events: none;
+    }
+
+    header {
+      max-width: 700px;
+      margin: 0 auto 2.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .logo {
+      font-weight: 800;
+      font-size: 1.1rem;
+      letter-spacing: -0.03em;
+    }
+
+    .logo span { color: var(--cyan); }
+
+    a.back {
+      font-family: var(--mono);
+      font-size: 0.72rem;
+      color: var(--muted);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    a.back:hover { color: var(--cyan); }
+
+    .container {
+      max-width: 700px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.5rem;
+    }
+
+    h1 {
+      font-size: 1.5rem;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      margin-bottom: 0.4rem;
+    }
+
+    h1 span { color: var(--cyan); }
+
+    .subtitle {
+      font-size: 0.85rem;
+      color: var(--muted);
+      margin-bottom: 1.25rem;
+    }
+
+    textarea {
+      width: 100%;
+      height: 140px;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text);
+      font-family: var(--mono);
+      font-size: 0.8rem;
+      padding: 0.85rem 1rem;
+      resize: vertical;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    textarea:focus { border-color: var(--cyan); }
+
+    textarea::placeholder { color: var(--dim); }
+
+    button {
+      margin-top: 0.75rem;
+      background: var(--cyan);
+      color: #000;
+      border: none;
+      border-radius: 8px;
+      padding: 0.7rem 1.5rem;
+      font-family: var(--font);
+      font-weight: 700;
+      font-size: 0.85rem;
+      cursor: pointer;
+      transition: opacity 0.2s;
+    }
+
+    button:hover { opacity: 0.85; }
+    button:disabled { opacity: 0.4; cursor: not-allowed; }
+
+    #results {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .result {
+      font-family: var(--mono);
+      font-size: 0.78rem;
+      padding: 0.7rem 1rem;
+      border-radius: 8px;
+      animation: fadeUp 0.3s ease forwards;
+      opacity: 0;
+    }
+
+    .result.ok {
+      background: rgba(52,211,153,0.08);
+      border: 1px solid rgba(52,211,153,0.2);
+      color: var(--green);
+    }
+
+    .result.error {
+      background: rgba(248,113,113,0.08);
+      border: 1px solid rgba(248,113,113,0.2);
+      color: var(--red);
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(6px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="logo">go<span>lab</span></div>
+    <a href="/" class="back">← back</a>
+  </header>
+
+  <div class="container">
+    <div class="card">
+      <h1>Link<span>Checker</span></h1>
+      <p class="subtitle">Paste URLs below, one per line. Go checks them all in parallel.</p>
+
+      <form id="form" method="POST" action="/projects/linkchecker">
+        <textarea
+          name="urls"
+          placeholder="https://google.com&#10;https://github.com&#10;https://thissitedoesnotexist.xyz"
+        ></textarea>
+        <button type="submit" id="btn">Check URLs</button>
+      </form>
+    </div>
+
+    <div id="results"></div>
+  </div>
+
+  <script>
+    const form = document.getElementById('form')
+    const btn = document.getElementById('btn')
+    const resultsDiv = document.getElementById('results')
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault()
+      btn.disabled = true
+      btn.textContent = 'Checking...'
+      resultsDiv.innerHTML = ''
+
+      const formData = new FormData(form)
+
+      const response = await fetch('/projects/linkchecker', {
+        method: 'POST',
+        body: new URLSearchParams(formData)
+      })
+
+      const reader = response.body.getReader()
+      const decoder = new TextDecoder()
+
+      while (true) {
+        const { done, value } = await reader.read()
+        if (done) break
+
+        const chunk = decoder.decode(value)
+        resultsDiv.innerHTML += chunk
+      }
+
+      btn.disabled = false
+      btn.textContent = 'Check URLs'
+    })
+  </script>
+
+</body>
+</html>
