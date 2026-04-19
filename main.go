@@ -36,7 +36,7 @@ var projects = []Project{
 		ID:          "linkchecker",
 		Name:        "LinkChecker",
 		Description: "Bulk URL checker running in parallel with timeouts, context cancellation and streaming results via SSE.",
-		Status:      "planned",
+		Status:      "live",
 		Tags:        []string{"Channels", "Context", "SSE", "Concurrency"},
 		URL:         "/projects/linkchecker",
 	},
