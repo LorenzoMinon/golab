@@ -27,7 +27,7 @@ var projects = []Project{
 		ID:          "argodash",
 		Name:        "ArgoDash",
 		Description: "Real-time dashboard: blue dollar, weather, S&P500 and country risk — a Go server aggregating multiple APIs in parallel.",
-		Status:      "building",
+		Status:      "live",
 		Tags:        []string{"REST APIs", "Goroutines", "JSON", "HTTP Client"},
 		URL:         "/projects/argodash",
 	},
