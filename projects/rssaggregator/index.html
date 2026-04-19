@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>RSS Aggregator — golab</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg:     #0a0a0f;
+      --card:   #111118;
+      --border: rgba(255,255,255,0.06);
+      --text:   #f0f2f7;
+      --muted:  #8a8fa8;
+      --dim:    #3d4260;
+      --cyan:   #00acd7;
+      --radius: 12px;
+      --font:   'Plus Jakarta Sans', sans-serif;
+      --mono:   'JetBrains Mono', monospace;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font);
+      min-height: 100vh;
+      padding: 2rem;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(255,255,255,0.015) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.015) 1px, transparent 1px);
+      background-size: 48px 48px;
+      pointer-events: none;
+    }
+
+    header {
+      max-width: 700px;
+      margin: 0 auto 2.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .logo {
+      font-weight: 800;
+      font-size: 1.1rem;
+      letter-spacing: -0.03em;
+    }
+
+    .logo span { color: var(--cyan); }
+
+    a.back {
+      font-family: var(--mono);
+      font-size: 0.72rem;
+      color: var(--muted);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    a.back:hover { color: var(--cyan); }
+
+    .container {
+      max-width: 700px;
+      margin: 0 auto;
+    }
+
+    h1 {
+      font-size: 1.5rem;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      margin-bottom: 0.4rem;
+    }
+
+    h1 span { color: var(--cyan); }
+
+    .subtitle {
+      font-size: 0.85rem;
+      color: var(--muted);
+      margin-bottom: 2rem;
+    }
+
+    .feed {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .item {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.1rem 1.25rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+      animation: fadeUp 0.3s ease forwards;
+      opacity: 0;
+      transition: border-color 0.2s;
+    }
+
+    .item:hover { border-color: var(--cyan); }
+
+    .item a {
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--text);
+      text-decoration: none;
+      line-height: 1.4;
+    }
+
+    .item a:hover { color: var(--cyan); }
+
+    .item-meta {
+      display: flex;
+      gap: 1rem;
+      align-items: center;
+    }
+
+    .source {
+      font-family: var(--mono);
+      font-size: 0.62rem;
+      color: var(--cyan);
+      background: rgba(0,172,215,0.08);
+      border: 1px solid rgba(0,172,215,0.15);
+      padding: 0.15rem 0.5rem;
+      border-radius: 2rem;
+    }
+
+    .date {
+      font-family: var(--mono);
+      font-size: 0.62rem;
+      color: var(--dim);
+    }
+
+    .item:nth-child(1)  { animation-delay: 0.02s; }
+    .item:nth-child(2)  { animation-delay: 0.04s; }
+    .item:nth-child(3)  { animation-delay: 0.06s; }
+    .item:nth-child(4)  { animation-delay: 0.08s; }
+    .item:nth-child(5)  { animation-delay: 0.10s; }
+    .item:nth-child(6)  { animation-delay: 0.12s; }
+    .item:nth-child(7)  { animation-delay: 0.14s; }
+    .item:nth-child(8)  { animation-delay: 0.16s; }
+    .item:nth-child(9)  { animation-delay: 0.18s; }
+    .item:nth-child(10) { animation-delay: 0.20s; }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(6px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="logo">go<span>lab</span></div>
+    <a href="/" class="back">← back</a>
+  </header>
+
+  <div class="container">
+    <h1>RSS <span>Aggregator</span></h1>
+    <p class="subtitle">{{len .}} articles fetched in parallel from 5 tech feeds — sorted by date.</p>
+
+    <div class="feed">
+      {{range .}}
+      <div class="item">
+        <a href="{{.Link}}" target="_blank">{{.Title}}</a>
+        <div class="item-meta">
+          <span class="source">{{.Source}}</span>
+          <span class="date">{{.PubDate}}</span>
+        </div>
+      </div>
+      {{end}}
+    </div>
+  </div>
+
+</body>
+</html>

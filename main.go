@@ -8,6 +8,7 @@ import (
 
 	"github.com/LorenzoMinon/golab/projects/argodash"
 	"github.com/LorenzoMinon/golab/projects/linkchecker"
+	"github.com/LorenzoMinon/golab/projects/rssaggregator"
 )
 
 type Project struct {
@@ -84,6 +85,7 @@ func main() {
 
 	http.Handle("/projects/argodash", argodash.Handler())
 	http.Handle("/projects/linkchecker", linkchecker.Handler())
+	http.Handle("/projects/rssaggregator", rssaggregator.Handler())
 
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		data := PageData{Projects: projects}
