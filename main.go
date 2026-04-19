@@ -45,7 +45,7 @@ var projects = []Project{
 		ID:          "rssaggregator",
 		Name:        "RSS Aggregator",
 		Description: "Reads N RSS feeds in parallel, deduplicates entries and serves a unified sorted feed.",
-		Status:      "planned",
+		Status:      "live",
 		Tags:        []string{"Goroutines", "Channels", "XML", "Scraping"},
 		URL:         "/projects/rssaggregator",
 	},
