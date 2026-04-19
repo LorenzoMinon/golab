@@ -1,10 +1,9 @@
-package main
+package argodash
 
 import (
 	"encoding/json"
 	"fmt"
 	"html/template"
-	"log"
 	"net/http"
 	"os"
 	"sync"
@@ -376,8 +375,8 @@ func fetchISS(wg *sync.WaitGroup, result *ISSData) {
 	result.Longitude = raw.Position.Longitude
 }
 
-func main() {
-	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+func Handler() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
 		var (
 			dollar    DollarData
 			weather   WeatherData
@@ -392,7 +391,7 @@ func main() {
 		)
 
 		var wg sync.WaitGroup
-		wg.Add(10) // 10 goroutines
+		wg.Add(10)
 
 		go fetchDollar(&wg, &dollar)
 		go fetchWeather(&wg, &weather)
@@ -421,12 +420,9 @@ func main() {
 			FetchedAt: time.Now().Format("15:04:05"),
 		}
 
-		tmpl := template.Must(template.ParseFiles("dashboard.html"))
+		tmpl := template.Must(template.ParseFiles("projects/argodash/dashboard.html"))
 		if err := tmpl.Execute(w, data); err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 		}
-	})
-
-	log.Println("argodash running on http://localhost:9000")
-	log.Fatal(http.ListenAndServe(":9000", nil))
+	}
 }

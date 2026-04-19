@@ -5,6 +5,8 @@ import (
 	"log"
 	"net/http"
 	"os"
+
+	"github.com/LorenzoMinon/golab/projects/argodash"
 )
 
 type Project struct {
@@ -78,6 +80,8 @@ func main() {
 
 	fs := http.FileServer(http.Dir("web/static"))
 	http.Handle("/static/", http.StripPrefix("/static/", fs))
+
+	http.Handle("/projects/argodash", argodash.Handler())
 
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		data := PageData{Projects: projects}
