@@ -9,6 +9,7 @@ import (
 	"github.com/LorenzoMinon/golab/projects/argodash"
 	"github.com/LorenzoMinon/golab/projects/linkchecker"
 	"github.com/LorenzoMinon/golab/projects/rssaggregator"
+	"github.com/LorenzoMinon/golab/projects/shorturl"
 )
 
 type Project struct {
@@ -53,7 +54,7 @@ var projects = []Project{
 		ID:          "shorturl",
 		Name:        "ShortURL",
 		Description: "URL shortener with PostgreSQL, click stats and configurable TTL.",
-		Status:      "planned",
+		Status:      "live",
 		Tags:        []string{"PostgreSQL", "REST API", "Middleware"},
 		URL:         "/projects/shorturl",
 	},
@@ -86,6 +87,8 @@ func main() {
 	http.Handle("/projects/argodash", argodash.Handler())
 	http.Handle("/projects/linkchecker", linkchecker.Handler())
 	http.Handle("/projects/rssaggregator", rssaggregator.Handler())
+	http.Handle("/projects/shorturl", shorturl.Handler())
+	http.Handle("/projects/shorturl/", shorturl.Handler())
 
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		data := PageData{Projects: projects}

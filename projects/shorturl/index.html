@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ShortURL — golab</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg:     #0a0a0f;
+      --card:   #111118;
+      --border: rgba(255,255,255,0.06);
+      --text:   #f0f2f7;
+      --muted:  #8a8fa8;
+      --dim:    #3d4260;
+      --cyan:   #00acd7;
+      --green:  #34d399;
+      --red:    #f87171;
+      --radius: 12px;
+      --font:   'Plus Jakarta Sans', sans-serif;
+      --mono:   'JetBrains Mono', monospace;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font);
+      min-height: 100vh;
+      padding: 2rem;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(255,255,255,0.015) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.015) 1px, transparent 1px);
+      background-size: 48px 48px;
+      pointer-events: none;
+    }
+
+    header {
+      max-width: 700px;
+      margin: 0 auto 2.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .logo {
+      font-weight: 800;
+      font-size: 1.1rem;
+      letter-spacing: -0.03em;
+    }
+
+    .logo span { color: var(--cyan); }
+
+    a.back {
+      font-family: var(--mono);
+      font-size: 0.72rem;
+      color: var(--muted);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    a.back:hover { color: var(--cyan); }
+
+    .container {
+      max-width: 700px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.5rem;
+    }
+
+    h1 {
+      font-size: 1.5rem;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      margin-bottom: 0.4rem;
+    }
+
+    h1 span { color: var(--cyan); }
+
+    .subtitle {
+      font-size: 0.85rem;
+      color: var(--muted);
+      margin-bottom: 1.25rem;
+    }
+
+    .input-row {
+      display: flex;
+      gap: 0.75rem;
+    }
+
+    input[type="text"] {
+      flex: 1;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text);
+      font-family: var(--mono);
+      font-size: 0.8rem;
+      padding: 0.7rem 1rem;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    input[type="text"]:focus { border-color: var(--cyan); }
+    input[type="text"]::placeholder { color: var(--dim); }
+
+    button {
+      background: var(--cyan);
+      color: #000;
+      border: none;
+      border-radius: 8px;
+      padding: 0.7rem 1.25rem;
+      font-family: var(--font);
+      font-weight: 700;
+      font-size: 0.85rem;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: opacity 0.2s;
+    }
+
+    button:hover { opacity: 0.85; }
+
+    .success {
+      margin-top: 1rem;
+      background: rgba(52,211,153,0.08);
+      border: 1px solid rgba(52,211,153,0.2);
+      border-radius: 8px;
+      padding: 0.85rem 1rem;
+      font-family: var(--mono);
+      font-size: 0.8rem;
+      color: var(--green);
+    }
+
+    .success a {
+      color: var(--green);
+    }
+
+    .error-msg {
+      margin-top: 1rem;
+      background: rgba(248,113,113,0.08);
+      border: 1px solid rgba(248,113,113,0.2);
+      border-radius: 8px;
+      padding: 0.85rem 1rem;
+      font-family: var(--mono);
+      font-size: 0.8rem;
+      color: var(--red);
+    }
+
+    .urls-header {
+      font-family: var(--mono);
+      font-size: 0.68rem;
+      color: var(--cyan);
+      letter-spacing: 0.08em;
+      margin-bottom: 1rem;
+    }
+
+    .url-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .url-item {
+      display: grid;
+      grid-template-columns: 90px 1fr auto;
+      gap: 1rem;
+      align-items: center;
+      padding: 0.85rem 1rem;
+      background: rgba(255,255,255,0.02);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      transition: border-color 0.2s;
+    }
+
+    .url-item:hover { border-color: var(--cyan); }
+
+    .url-code {
+      font-family: var(--mono);
+      font-size: 0.75rem;
+      color: var(--cyan);
+    }
+
+    .url-code a {
+      color: var(--cyan);
+      text-decoration: none;
+    }
+
+    .url-code a:hover { opacity: 0.7; }
+
+    .url-original {
+      font-size: 0.8rem;
+      color: var(--muted);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .url-clicks {
+      font-family: var(--mono);
+      font-size: 0.68rem;
+      color: var(--dim);
+      white-space: nowrap;
+    }
+
+    .empty {
+      font-size: 0.85rem;
+      color: var(--dim);
+      text-align: center;
+      padding: 2rem;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="logo">go<span>lab</span></div>
+    <a href="/" class="back">← back</a>
+  </header>
+
+  <div class="container">
+
+    <div class="card">
+      <h1>Short<span>URL</span></h1>
+      <p class="subtitle">Paste a long URL and get a short one. Built with Go + PostgreSQL.</p>
+
+      <form method="POST" action="/projects/shorturl">
+        <div class="input-row">
+          <input type="text" name="url" placeholder="https://example.com/very/long/url" />
+          <button type="submit">Shorten</button>
+        </div>
+      </form>
+
+      {{if .Success}}
+      <div class="success">
+        ✅ <a href="{{.BaseURL}}{{.Success}}" target="_blank">{{.BaseURL}}{{.Success}}</a>
+      </div>
+      {{end}}
+
+      {{if .Error}}
+      <div class="error-msg">❌ {{.Error}}</div>
+      {{end}}
+    </div>
+
+    <div class="card">
+      <div class="urls-header">// recent links</div>
+      <div class="url-list">
+        {{if .URLs}}
+          {{range .URLs}}
+          <div class="url-item">
+            <div class="url-code">
+              <a href="{{$.BaseURL}}{{.Code}}" target="_blank">{{.Code}}</a>
+            </div>
+            <div class="url-original">{{.Original}}</div>
+            <div class="url-clicks">{{.Clicks}} clicks</div>
+          </div>
+          {{end}}
+        {{else}}
+          <div class="empty">no links yet — create one above</div>
+        {{end}}
+      </div>
+    </div>
+
+  </div>
+
+</body>
+</html>
