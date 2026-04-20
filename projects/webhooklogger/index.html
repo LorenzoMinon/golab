@@ -1,0 +1,296 @@
+{{define "webhooklogger"}}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>WebhookLogger — golab</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg:     #0a0a0f;
+      --card:   #111118;
+      --border: rgba(255,255,255,0.06);
+      --text:   #f0f2f7;
+      --muted:  #8a8fa8;
+      --dim:    #3d4260;
+      --cyan:   #00acd7;
+      --green:  #34d399;
+      --yellow: #fbbf24;
+      --radius: 12px;
+      --font:   'Plus Jakarta Sans', sans-serif;
+      --mono:   'JetBrains Mono', monospace;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font);
+      min-height: 100vh;
+      padding: 2rem;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(255,255,255,0.015) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.015) 1px, transparent 1px);
+      background-size: 48px 48px;
+      pointer-events: none;
+    }
+
+    header {
+      max-width: 900px;
+      margin: 0 auto 2.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .logo {
+      font-weight: 800;
+      font-size: 1.1rem;
+      letter-spacing: -0.03em;
+    }
+
+    .logo span { color: var(--cyan); }
+
+    a.back {
+      font-family: var(--mono);
+      font-size: 0.72rem;
+      color: var(--muted);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    a.back:hover { color: var(--cyan); }
+
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.5rem;
+    }
+
+    h1 {
+      font-size: 1.5rem;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      margin-bottom: 0.4rem;
+    }
+
+    h1 span { color: var(--cyan); }
+
+    .subtitle {
+      font-size: 0.85rem;
+      color: var(--muted);
+      margin-bottom: 1.25rem;
+    }
+
+    .endpoint {
+      font-family: var(--mono);
+      font-size: 0.78rem;
+      background: rgba(0,172,215,0.08);
+      border: 1px solid rgba(0,172,215,0.15);
+      border-radius: 8px;
+      padding: 0.85rem 1rem;
+      color: var(--cyan);
+      word-break: break-all;
+    }
+
+    .endpoint span {
+      color: var(--muted);
+      margin-right: 0.5rem;
+    }
+
+    .webhooks-header {
+      font-family: var(--mono);
+      font-size: 0.68rem;
+      color: var(--cyan);
+      letter-spacing: 0.08em;
+      margin-bottom: 1rem;
+    }
+
+    .webhook-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .webhook-item {
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    .webhook-header {
+      display: grid;
+      grid-template-columns: 60px 100px 1fr auto;
+      gap: 1rem;
+      align-items: center;
+      padding: 0.85rem 1rem;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .webhook-header:hover { background: rgba(255,255,255,0.02); }
+
+    .webhook-id {
+      font-family: var(--mono);
+      font-size: 0.65rem;
+      color: var(--dim);
+    }
+
+    .webhook-source {
+      font-family: var(--mono);
+      font-size: 0.68rem;
+      color: var(--cyan);
+      background: rgba(0,172,215,0.08);
+      border: 1px solid rgba(0,172,215,0.15);
+      padding: 0.2rem 0.5rem;
+      border-radius: 2rem;
+      text-align: center;
+    }
+
+    .webhook-method {
+      font-family: var(--mono);
+      font-size: 0.68rem;
+      color: var(--yellow);
+    }
+
+    .webhook-time {
+      font-family: var(--mono);
+      font-size: 0.65rem;
+      color: var(--dim);
+      white-space: nowrap;
+    }
+
+    .webhook-body {
+      display: none;
+      padding: 1rem;
+      border-top: 1px solid var(--border);
+      background: rgba(255,255,255,0.01);
+    }
+
+    .webhook-body.open { display: block; }
+
+    .webhook-body pre {
+      font-family: var(--mono);
+      font-size: 0.72rem;
+      color: var(--muted);
+      white-space: pre-wrap;
+      word-break: break-all;
+      line-height: 1.6;
+    }
+
+    .pagination {
+      display: flex;
+      gap: 0.75rem;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .page-btn {
+      font-family: var(--mono);
+      font-size: 0.72rem;
+      color: var(--cyan);
+      background: rgba(0,172,215,0.08);
+      border: 1px solid rgba(0,172,215,0.2);
+      border-radius: 8px;
+      padding: 0.5rem 1rem;
+      text-decoration: none;
+      transition: opacity 0.2s;
+    }
+
+    .page-btn:hover { opacity: 0.7; }
+
+    .page-info {
+      font-family: var(--mono);
+      font-size: 0.68rem;
+      color: var(--dim);
+    }
+
+    .empty {
+      font-size: 0.85rem;
+      color: var(--dim);
+      text-align: center;
+      padding: 2rem;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="logo">go<span>lab</span></div>
+    <a href="/" class="back">← back</a>
+  </header>
+
+  <div class="container">
+    <div class="card">
+      <h1>Webhook<span>Logger</span></h1>
+      <p class="subtitle">Send any HTTP request to the endpoint below and it will be logged here.</p>
+      <div class="endpoint">
+        <span>POST</span>localhost:8080/projects/webhooklogger?source=yourapp
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="webhooks-header">// received webhooks</div>
+      <div class="webhook-list">
+        {{if .Webhooks}}
+          {{range .Webhooks}}
+          <div class="webhook-item">
+            <div class="webhook-header" onclick="toggle({{.ID}})">
+              <div class="webhook-id">#{{.ID}}</div>
+              <div class="webhook-source">{{.Source}}</div>
+              <div class="webhook-method">{{.Method}}</div>
+              <div class="webhook-time">{{formatTime .CreatedAt}}</div>
+            </div>
+            <div class="webhook-body" id="body-{{.ID}}">
+              <pre>{{.Body}}</pre>
+            </div>
+          </div>
+          {{end}}
+        {{else}}
+          <div class="empty">no webhooks yet — send a POST request to the endpoint above</div>
+        {{end}}
+      </div>
+    </div>
+
+    {{if or .HasPrev .HasNext}}
+    <div class="pagination">
+      {{if .HasPrev}}
+        <a href="?page={{.PrevPage}}" class="page-btn">← prev</a>
+      {{end}}
+      <span class="page-info">page {{.CurrentPage}}</span>
+      {{if .HasNext}}
+        <a href="?page={{.NextPage}}" class="page-btn">next →</a>
+      {{end}}
+    </div>
+    {{end}}
+
+  </div>
+
+  <script>
+    function toggle(id) {
+      const body = document.getElementById('body-' + id)
+      body.classList.toggle('open')
+    }
+  </script>
+
+</body>
+</html>
+{{end}}

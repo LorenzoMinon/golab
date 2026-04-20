@@ -10,6 +10,7 @@ import (
 	"github.com/LorenzoMinon/golab/projects/linkchecker"
 	"github.com/LorenzoMinon/golab/projects/rssaggregator"
 	"github.com/LorenzoMinon/golab/projects/shorturl"
+	"github.com/LorenzoMinon/golab/projects/webhooklogger"
 )
 
 type Project struct {
@@ -62,7 +63,7 @@ var projects = []Project{
 		ID:          "webhooklogger",
 		Name:        "WebhookLogger",
 		Description: "Server that receives, logs and displays webhooks from any service with paginated history.",
-		Status:      "planned",
+		Status:      "live",
 		Tags:        []string{"HTTP", "PostgreSQL", "Real-time"},
 		URL:         "/projects/webhooklogger",
 	},
@@ -89,6 +90,7 @@ func main() {
 	http.Handle("/projects/rssaggregator", rssaggregator.Handler())
 	http.Handle("/projects/shorturl", shorturl.Handler())
 	http.Handle("/projects/shorturl/", shorturl.Handler())
+	http.Handle("/projects/webhooklogger", webhooklogger.Handler())
 
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		data := PageData{Projects: projects}
