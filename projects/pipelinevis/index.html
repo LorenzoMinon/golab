@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PipelineVis — golab</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg:     #0a0a0f;
+      --card:   #111118;
+      --border: rgba(255,255,255,0.06);
+      --text:   #f0f2f7;
+      --muted:  #8a8fa8;
+      --dim:    #3d4260;
+      --cyan:   #00acd7;
+      --green:  #34d399;
+      --yellow: #fbbf24;
+      --radius: 12px;
+      --font:   'Plus Jakarta Sans', sans-serif;
+      --mono:   'JetBrains Mono', monospace;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font);
+      min-height: 100vh;
+      padding: 2rem;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(255,255,255,0.015) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.015) 1px, transparent 1px);
+      background-size: 48px 48px;
+      pointer-events: none;
+    }
+
+    header {
+      max-width: 800px;
+      margin: 0 auto 2.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .logo {
+      font-weight: 800;
+      font-size: 1.1rem;
+      letter-spacing: -0.03em;
+    }
+
+    .logo span { color: var(--cyan); }
+
+    a.back {
+      font-family: var(--mono);
+      font-size: 0.72rem;
+      color: var(--muted);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    a.back:hover { color: var(--cyan); }
+
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.5rem;
+    }
+
+    h1 {
+      font-size: 1.5rem;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      margin-bottom: 0.4rem;
+    }
+
+    h1 span { color: var(--cyan); }
+
+    .subtitle {
+      font-size: 0.85rem;
+      color: var(--muted);
+      margin-bottom: 1.25rem;
+    }
+
+    textarea {
+      width: 100%;
+      height: 120px;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text);
+      font-family: var(--mono);
+      font-size: 0.78rem;
+      padding: 0.85rem 1rem;
+      resize: vertical;
+      outline: none;
+      transition: border-color 0.2s;
+      line-height: 1.6;
+    }
+
+    textarea:focus { border-color: var(--cyan); }
+    textarea::placeholder { color: var(--dim); }
+
+    button {
+      margin-top: 0.75rem;
+      background: var(--cyan);
+      color: #000;
+      border: none;
+      border-radius: 8px;
+      padding: 0.7rem 1.5rem;
+      font-family: var(--font);
+      font-weight: 700;
+      font-size: 0.85rem;
+      cursor: pointer;
+      transition: opacity 0.2s;
+    }
+
+    button:hover { opacity: 0.85; }
+
+    .legend {
+      display: flex;
+      gap: 1.5rem;
+      margin-top: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-family: var(--mono);
+      font-size: 0.65rem;
+      color: var(--muted);
+    }
+
+    .legend-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 2px;
+    }
+
+    .dot-source      { background: var(--cyan); }
+    .dot-transform   { background: var(--yellow); }
+    .dot-destination { background: var(--green); }
+
+    .diagram {
+      background: rgba(255,255,255,0.01);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.5rem;
+      overflow-x: auto;
+    }
+
+    .diagram svg {
+      width: 100%;
+      height: auto;
+    }
+
+    .empty {
+      text-align: center;
+      padding: 3rem;
+      color: var(--dim);
+      font-size: 0.85rem;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="logo">go<span>lab</span></div>
+    <a href="/" class="back">← back</a>
+  </header>
+
+  <div class="container">
+    <div class="card">
+      <h1>Pipeline<span>Vis</span></h1>
+      <p class="subtitle">Describe your data pipeline using <code style="color:var(--cyan);font-family:var(--mono)">-></code> to connect steps. One pipeline per line.</p>
+
+      <form method="POST" action="/projects/pipelinevis">
+        <textarea name="pipeline" placeholder="Excel -> Clean Data -> PostgreSQL&#10;API -> Normalize -> Clean Data -> Dashboard&#10;CSV -> Validate -> PostgreSQL"></textarea>
+        <button type="submit">Visualize</button>
+      </form>
+
+      <div class="legend">
+        <div class="legend-item">
+          <div class="legend-dot dot-source"></div>
+          source
+        </div>
+        <div class="legend-item">
+          <div class="legend-dot dot-transform"></div>
+          transform
+        </div>
+        <div class="legend-item">
+          <div class="legend-dot dot-destination"></div>
+          destination
+        </div>
+      </div>
+    </div>
+
+    {{if .HasGraph}}
+    <div class="diagram">
+      {{.SVG}}
+    </div>
+    {{else}}
+    <div class="diagram">
+      <div class="empty">your pipeline diagram will appear here</div>
+    </div>
+    {{end}}
+
+  </div>
+
+</body>
+</html>

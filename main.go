@@ -8,6 +8,7 @@ import (
 
 	"github.com/LorenzoMinon/golab/projects/argodash"
 	"github.com/LorenzoMinon/golab/projects/linkchecker"
+	"github.com/LorenzoMinon/golab/projects/pipelinevis"
 	"github.com/LorenzoMinon/golab/projects/rssaggregator"
 	"github.com/LorenzoMinon/golab/projects/shorturl"
 	"github.com/LorenzoMinon/golab/projects/webhooklogger"
@@ -71,7 +72,7 @@ var projects = []Project{
 		ID:          "pipelinevis",
 		Name:        "PipelineVis",
 		Description: "Describe a data pipeline in YAML, Go parses it and renders an interactive diagram.",
-		Status:      "planned",
+		Status:      "live",
 		Tags:        []string{"YAML", "Data Engineering", "Visualization"},
 		URL:         "/projects/pipelinevis",
 	},
@@ -91,6 +92,7 @@ func main() {
 	http.Handle("/projects/shorturl", shorturl.Handler())
 	http.Handle("/projects/shorturl/", shorturl.Handler())
 	http.Handle("/projects/webhooklogger", webhooklogger.Handler())
+	http.Handle("/projects/pipelinevis", pipelinevis.Handler())
 
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		data := PageData{Projects: projects}
